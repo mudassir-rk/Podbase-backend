@@ -1,0 +1,20 @@
+{
+  "name": "pro--2",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/mudassir-rk/youtube-backend#readme",
+  "bugs": {
+    "url": "https://github.com/mudassir-rk/youtube-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mudassir-rk/youtube-backend.git"
+  },
+  "license": "ISC",
+  "author": "Mudassir Khan ",  
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
