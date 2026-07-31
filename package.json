@@ -1,20 +1,24 @@
 {
   "name": "pro--2",
   "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/mudassir-rk/youtube-backend#readme",
-  "bugs": {
-    "url": "https://github.com/mudassir-rk/youtube-backend/issues"
+  "description": "this project ha backend of youtube",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mudassir-rk/youtube-backend.git"
   },
+  "keywords": [],
+  "author": "Mudassir Khan",
   "license": "ISC",
-  "author": "Mudassir Khan ",  
-  "type": "commonjs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bugs": {
+    "url": "https://github.com/mudassir-rk/youtube-backend/issues"
+  },
+  "homepage": "https://github.com/mudassir-rk/youtube-backend#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
