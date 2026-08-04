@@ -20,5 +20,13 @@
   "homepage": "https://github.com/mudassir-rk/youtube-backend#readme",
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.0",
+    "mongoose-aggregate-paginate-v2": "^1.1.4"
   }
 }
