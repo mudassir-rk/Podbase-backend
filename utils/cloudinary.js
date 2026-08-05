@@ -11,6 +11,7 @@ import fs from 'fs';
      const uploadOnCloudinary = async (localFilePath) =>{
         try{
             if(!localFilePath){
+               
                 throw new Error('No file path provided');
            }
            const response = await cloudinary.uploader.upload(localFilePath,
@@ -20,7 +21,6 @@ import fs from 'fs';
      console.log("file is uploaded successfully" , response.url);
     fs.unlinkSync(localFilePath)
     return response;
-
 }
        // to remove the locally saved  temporary file as the upload 
        catch(error)  {
