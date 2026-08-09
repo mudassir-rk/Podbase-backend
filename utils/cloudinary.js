@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinaryl';
+import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
     // Configuration
     cloudinary.config({ 
@@ -6,7 +6,6 @@ import fs from 'fs';
         api_key: '455241831641233', 
         api_secret: 'pwtT-vrsgC3roYG-kUFbF1CrRAE' // 
     });
-    
     // Upload an image
      const uploadOnCloudinary = async (localFilePath) =>{
         try{
@@ -18,7 +17,8 @@ import fs from 'fs';
             {
                 response_type: "auto"
     })
-     console.log("file is uploaded successfully" , response.url);
+    //  console.log("file is uploaded successfully" , response.url);
+    // fs.unlinkSync(localFilePath)
     fs.unlinkSync(localFilePath)
     return response;
 }
@@ -31,20 +31,26 @@ import fs from 'fs';
     console.log(uploadResult);
      }
     
-    // Optimize delivery by resizing and applying auto-format and auto-quality
-    const optimizeUrl = cloudinary.url('shoes', {
-        fetch_format: 'auto',
-        quality: 'auto'
-    });
-    
-    console.log(optimizeUrl);
-    
-    // Transform the image: auto-crop to square aspect_ratio
-    const autoCropUrl = cloudinary.url('shoes', {
-        crop: 'auto',
-        gravity: 'auto',
-        width: 500,
-        height: 500,
-    });
-    
-    console.log(autoCropUrl);    
+
+// import fs from 'fs';
+// import { v2 as cloudinary } from 'cloudinary';
+
+// const uploadOnCloudinary = async (localFilePath) => {
+//   try {
+//     if (!localFilePath) return null;
+//     const response = await cloudinary.uploader.upload(localFilePath, {
+//       resource_type: "auto"
+//     });
+//     fs.unlinkSync(localFilePath);
+//     return response;
+//   } catch (error) {
+//     if (fs.existsSync(localFilePath)) {
+//       fs.unlinkSync(localFilePath);
+//     }
+//     console.error("Cloudinary upload error:", error.message);
+//     return null;
+//   }
+// }
+
+   
+export {uploadOnCloudinary}
