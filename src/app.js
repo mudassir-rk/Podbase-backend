@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import userRouter from '../routes/user.js';
 
 const app = express();
 app.use(cors({
@@ -12,7 +13,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: '50kb' }));// url me '+' or '&20'
 app.use(express.static('public'));
 
-import userRouter from '../routes/user.js';
 app.use('/api/v1/users', userRouter);
 
 export {app};

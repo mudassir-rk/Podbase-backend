@@ -1,8 +1,7 @@
 import { asyncHandler} from "../utils/asyncHandler.js"
 import {User} from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-
-import {ApiResponse} from "../utils/ApiResponse.js"
+import {ApiResponse} from "../utils/ApiResponse.js";
     //STEPS TO REGISTER USER-->>
     // get user details from frontend
     // validation - not empty
@@ -18,10 +17,8 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 
 const registerUser = asyncHandler(async (req,res,next) =>{
     const {email,username,password,fullName} = req.body
-    // console.log("email",email);
-    console.log("username",username);
-    console.log("password",password);
-   
+    //console.log("username",username);
+    
     if(!email || !username || !password){
         return res.status(400).json({ // also be written as use of ApiError
             success:false,
@@ -34,17 +31,12 @@ const registerUser = asyncHandler(async (req,res,next) =>{
             message:"User with email or username already exists"
         })
     }
-    console.log("req.files", req.files);
-    // if (existedUser) {
-    //     throw new ApiError(409, "User with email or username already exists")
-    // }
-    // //console.log(req.files);
+    //const avatarLocalPath = req.files?.avatar[0]?.path; // ?.[0] optional chaining array index ke liye bhi use ho rahi hai, taaki agar avatar undefined ho toh crash na ho.
 
-    const avatarLocalPath = req.files?.avatar[0]?.path; // ?.[0] optional chaining array index ke liye bhi use ho rahi hai, taaki agar avatar undefined ho toh crash na ho.
-    // if (!req.files || !req.files.avatar || req.files.avatar.length === 0) {
-    // throw new ApiError(400, "Avatar file is required");
-    // }
-    // const avatarLocalPath = req.files.avatar[0].path;
+    if (!req.files || !req.files.avatar || req.files.avatar.length === 0) {
+    throw new ApiError(400, "Avatar file is required");
+    }
+    const avatarLocalPath = req.files.avatar[0].path;
 
     if(!req.files || !req.files.coverImage || req.files.coverImage.length === 0) {
         throw new ApiError(400, "Cover image file is required");
@@ -67,11 +59,10 @@ const registerUser = asyncHandler(async (req,res,next) =>{
             message: "Avatar file is required"
         })
     }
-
     const newUser = await User.create({ // create user in db
         fullName,
-        // avatar: avatar.url,
-        // coverImage: coverImage?.url || "", 
+        avatar: avatar.url,
+        coverImage: coverImage?.url || "", 
         email, 
         password,
         username: username.toLowerCase()
@@ -81,8 +72,7 @@ const registerUser = asyncHandler(async (req,res,next) =>{
     return res.status(500).json({
         success:false,
         message:"User creation failed"
-    })
-   }
+    })}
    return res.status(201).json(new ApiResponse(201,createdUser,"User created successfully"))
 })
 export {registerUser}
