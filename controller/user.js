@@ -2,6 +2,7 @@ import { asyncHandler} from "../utils/asyncHandler.js"
 import {User} from "../models/userModel.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
+import { verifyJWT } from "../middleware/auth.js";
     //STEPS TO REGISTER USER-->>
     // get user details from frontend
     // validation - not empty
@@ -15,7 +16,26 @@ import {ApiResponse} from "../utils/ApiResponse.js";
 
     //To check each step, we can use console log for it.
 
-const registerUser = asyncHandler(async (req,res,next) =>{
+    const generateAccessTokenAndRefreshToken = async(userId) =>{
+        try{
+            const user = await User.findById(userId)
+            const AccessToken = user.generateAccessToken()
+            const RefreshToken = user.generateRefreshToken()
+
+            user.refreshToken = refreshToken
+            await user.save // tumhare paas already ek Mongoose document instance hai (DB se fetch kiya hua). Uske field ko directly modify karke .save() call karna sabse simple tareeka hai partial update karne ka — findByIdAndUpdate() ka alternative.
+            ({ validateBeforeSave:false})// Mongoose by default .save() par schema ke saare validators (required fields, min length, custom validators, etc.) run karta hai. Yaha sirf refreshToken field update ho raha hai — password, email jaise doosre required fields dobara validate karne ki zarurat nahi (aur agar validation chal jaye, toh galti se error throw ho sakta hai kyunki password field yaha touch nahi ho raha but validator phir bhi check kar sakta hai). Isliye validation skip kar diya taaki sirf ye ek field save ho jaye bina kisi unrelated validation error ke.
+
+            return {accessToken,refresToken}
+        }
+        catch(error){
+            return res.status(403).json({
+                success:false,
+                message: "error while generateAccessTokenAndRefreshToken"
+            })
+        }
+    }
+const registerUser = asyncHandler(async (req,res) =>{
     const {email,username,password,fullName} = req.body
     //console.log("username",username);
     
@@ -75,4 +95,72 @@ const registerUser = asyncHandler(async (req,res,next) =>{
     })}
    return res.status(201).json(new ApiResponse(201,createdUser,"User created successfully"))
 })
-export {registerUser}
+    //STEPS TO LOGIN USER-->>
+    // get username or email and pasword from req body ->data
+    // validation - not empty
+    // check if user exists: username, email
+    // check for password match
+    // generate access token and refresh token
+    // save refresh token in db
+    // return res with access token and refresh tokenh
+const loginUser = asyncHandler(async (req,res) =>{
+    const {email,username,password} = req.body
+    
+    if(!email ||!username || !password){
+        return res.status(400).json({ // also be written as use of ApiError
+            success:false,
+            message:"Please provide all the required fields"
+        })}
+    const user = await User.findOne({$or:[{username:username},{email:email}]})
+    if(!user){
+        return res.status(404).json({
+            success:false,
+            message:"User not found"
+        })
+    }
+    const ispawdValid  = await user.ispasswordCoreect(password)
+     if(!ispawdValid){
+        return res.status(401).json({
+            success:false,
+            message:"Invalid credentials"
+        })
+    }
+    const {accessToken,refreshToken} = await generateAccessTokenAndRefreshToken(user._id)
+    const userData = await User.findById(user._id).select("-password -refreshToken")
+    return res.status(200).json(
+        new ApiResponse(200,
+            {user:userData,accessToken,refreshToken},
+            "User logged in successfully"))
+    const options  = { //for cookies
+        httpOnly:true,
+        secure:true
+    }
+    return res.status(200)
+    .cookie("refreshToken",refreshToken, options)
+    .cookie("accessToken",accessToken,options)
+    .json(new ApiResponse(200,
+        // {user:loggedInUser,accessToken,refreshToken}
+        "User logged In succesfully"
+            )
+        )
+})
+const logout = asyncHandler(async(req,res) =>{
+
+  await User.findByIdAndUpdate( // bcz rfrshToken store on db 
+    req.user._id,
+    {
+      $unset: { refreshToken: 1 }
+    },
+    { new: true }
+  )
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, options, "User logged out"))
+})    
+export {registerUser,loginUser,logout}
