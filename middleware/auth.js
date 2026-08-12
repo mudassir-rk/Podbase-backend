@@ -1,6 +1,6 @@
- import {ApiError} from '../utils/ApiError.js'
+import {ApiError} from '../utils/ApiError.js'
 import jwt from 'jsonwebtoken'
-import {User} from '../models/userModel.js'
+import { User } from '../models/userModel.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import cookieParser from 'cookie-parser'
 
