@@ -186,6 +186,16 @@ const registerUser = asyncHandler(async (req,res) =>{
 //         "User logged In succesfully"
 // ))
 // })
+//------------------------
+//corrected userLoggin 
+// Variable Casing Mismatches: You created AccessToken and RefreshToken (capitalized A and R), but then tried to assign user.refreshToken = refreshToken (lowercase) and return {accessToken, refresToken}. This throws a ReferenceError.
+
+//Typo in Return Statement: refresToken is missing the letter h.
+
+//Function Call Syntax on .save: Putting comments directly between await user.save and ({ validateBeforeSave: false }) breaks the function call syntax.
+
+//Unreachable Cookie Response in loginUser: In loginUser, you have a return res.status(200)... statement placed before your .cookie() code, making your cookie settings completely unreachable.
+
 const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
 
