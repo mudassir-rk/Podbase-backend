@@ -203,7 +203,6 @@ const loginUser = asyncHandler(async (req, res) => {
             message: "User not found"
         });
     }
-
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) {
         return res.status(401).json({
