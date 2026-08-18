@@ -47,7 +47,7 @@ const userSchema = new Schema(
         timestamps: true
     }
 )
-
+// Type of error --/\
 // userSchema.pre("save", async function (next) {
 //     if(!this.isModified("password")) return next();
 
@@ -56,8 +56,10 @@ const userSchema = new Schema(
 // })
 // Option A: Pure async/await, next hata do
 userSchema.pre("save", async function () {
+
   if (!this.isModified("password"))
      return;
+
   this.password = await bcrypt.hash(this.password, 10);
 });
 userSchema.methods.isPasswordCorrect = async function(password){
