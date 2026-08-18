@@ -17,8 +17,7 @@ import fs from 'fs';
             {
                 response_type: "auto"
     })
-    //  console.log("file is uploaded successfully" , response.url);
-    // fs.unlinkSync(localFilePath)
+    console.log("file is uploaded successfully" , response.url);
     fs.unlinkSync(localFilePath)
     return response;
 }
@@ -27,7 +26,6 @@ import fs from 'fs';
           fs.unlinkSync(localFilePath)
           return null;
        };
-    
     console.log(uploadResult);
      }
     

@@ -176,7 +176,7 @@ const logout = asyncHandler(async(req,res) =>{
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, options, "User logged out"))
 });
-const refreshAccessToken = asyncHandler(async (req,res)=>{
+const refresh_AccessToken = asyncHandler(async (req,res)=>{
     const incomingrefreshToken = req.cookies?.refreshToken
     console.log("result breakdown:",incomingrefreshToken)
     if(!incomingrefreshToken){
@@ -211,10 +211,10 @@ const refreshAccessToken = asyncHandler(async (req,res)=>{
 }) 
 const changeCurrentPassword = asyncHandler(async(req,res) =>{
     const {oldPassword,newPassword} = req.body
-    const user = await User.findById(req.user?._id) //user_id come from auth middleware bcz of next() 
+    const user = await User.findById(req.user?._id) //user_id come from auth middleware bcz of next(),it is possible bcz user's must logs'in to change it's paswd   
     console.log(user)
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)//used from userModel it checks password --> gives true or false
-    console.log("SOmething",isPasswordCorrect)
+    console.log("Something",isPasswordCorrect)
     if(!isPasswordCorrect){
         throw new ApiError(401,"Invalid old password")
     }
@@ -239,7 +239,7 @@ const user = User.findByIdAndUpdate(req.user?._id,
 return res.status(200).json(new ApiResponse(200,"Account details Updated Succesfully"))
 })
 const updateAvatarImage = asyncHandler(async(req,res)=>{
-    //request from auth middleware required=>>>>> Client request bhejta hai apne login cookie ke saath — abhi tak koi bhi "kaun sa user hai" nahi jaanta =>>>> (middleware) verifyJWT us cookie ke token ko decode karke DB me exact user dhoondh leta hai
+    //request from auth middleware required=>>>>> Client request bhejta hai apne login cookie ke saath — "kaun sa user hai" nahi jaanta =>>>> (middleware) verifyJWT us cookie ke token ko decode karke DB me exact user dhoondh leta hai
     const avatarLocalPath = req.file?.path
     if(!avatarLocalPath){
         throw new ApiError(400,"Avatar image not found")
