@@ -56,36 +56,30 @@ const userSchema = new Schema(
 // })
 // Option A: Pure async/await, next hata do
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password"))
+     return;
   this.password = await bcrypt.hash(this.password, 10);
-//   console.log(hash)
 });
-
 userSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)
     console.log(this.password)
 }
 userSchema.methods.generateAccessToken = function(){
-   
     return jwt.sign(
         {
             _id: this._id,
-          
             username: this.username,
-           
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
     )
-}
-
+} 
 userSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
             _id: this._id,
-            
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -93,5 +87,4 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-
 export const User = mongoose.model("User", userSchema)

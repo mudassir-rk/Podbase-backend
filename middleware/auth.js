@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser'
 
 export const verifyJWT = asyncHandler (async(req,res,next) =>{
     try{
-        const token = await req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ","")
+        const token = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ","")
         console.log("matched :",token)
         if(!token){
         throw new ApiError(401,"Unathorized request")
@@ -14,9 +14,7 @@ export const verifyJWT = asyncHandler (async(req,res,next) =>{
         const decodedToken = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
         console.log(decodedToken)
         // matches accesstokens of users and memory
-        const user = await User.findById(decodedToken._id).select
-        //("-password","-refreshToken")
-
+        const user = await User.findById(decodedToken._id).select("-password" ,"-refreshToken")
         console.log(user)
         if(!user){
             throw new ApiError(401,"Invalid Access Token")
@@ -24,5 +22,5 @@ export const verifyJWT = asyncHandler (async(req,res,next) =>{
         req.user = user;
         next()
 }   catch(error){
-        throw new ApiError(401,"invalid access-token  ")
+        throw new ApiError(401,"invalid access-token")
 }})

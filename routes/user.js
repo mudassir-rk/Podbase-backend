@@ -5,7 +5,7 @@ import { logout } from '../controller/user.js';
 import multer from 'multer';
 import { upload } from "../middleware/multer.js";
 import { verifyJWT } from '../middleware/auth.js';
-import { refreshAccessToken } from '../controller/user.js';
+import { refreshAccessToken , changeCurrentPassword,updateAccountDetails} from '../controller/user.js';
 const router = Router()
 router.route("/register").post(
 upload.fields([
@@ -22,5 +22,7 @@ upload.fields([
 )
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT,logout)
-router.route("/refres-token").post(refreshAccessToken)
+router.route("/refresh-token").post(refreshAccessToken)
+router.route("/change-pwd").post(changeCurrentPassword)
+router.route("/updation").post(updateAccountDetails)
 export default router;
