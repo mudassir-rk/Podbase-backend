@@ -343,4 +343,52 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
     }
 return res.status(200).json(new ApiError(200,channel[0],"User channel created fetched successfully"))
 })
-export {registerUser,loginUser,logout,refreshAccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile};
+const getWatchHistory = asyncHandler(async(req,res)=>{
+    const user = await User.aggregate([
+        {
+            $match:{
+                //req.user._id-- not directly bcz , Aggregation are not used methods of mongoose to extact orig Id 
+                _id: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup:{ //from users to videos
+                from:"videos",
+                localField:"watchHistory",
+                foriegnField:"_id",
+                as:"watchHist",
+                pipeline:[
+                    {//from video to users
+                       $lookup:{
+                        from:"users",
+                        localField:"owner",
+                        foriegnField:"_id",
+                        as:"owner",
+                        pipeline:[
+                            {
+                                $project:{
+                                    fullName:1,
+                                    username:1,
+                                    avatar:1
+                                }
+
+                            }
+                        ]
+                       } 
+                    }
+                ]
+            }
+        },
+        {//to easier to find owner from array
+            $addFields:{
+                owner:{
+                    $first:"owner"
+                }
+            }
+        }
+    ])
+    return res.status(200).json(new ApiResponse(200,user[0].watchHistory,
+        "WatchHistory fetched succesflly"
+    ))
+})
+export {registerUser,loginUser,logout,refreshAccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory};

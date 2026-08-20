@@ -18,12 +18,10 @@ const userSchema = new Schema(
         },
         fullName: {
             type: String,
-            required: true,
-            
+            required: true,           
         },
         avatar: {
-            type: String, // cloudinary url
-           
+            type: String, // cloudinary url          
         },
         coverImage: {
             type: String, // cloudinary url
@@ -41,7 +39,6 @@ const userSchema = new Schema(
         refreshToken: {
             type: String
         }
-
     },
     {
         timestamps: true
@@ -89,4 +86,4 @@ userSchema.methods.generateRefreshToken = function(){
         }
     )
 }
-export const User = mongoose.model("User", userSchema)
+export const User = mongoose.model("User", userSchema);
