@@ -5,8 +5,10 @@ import { logout } from '../controller/user.js';
 import multer from 'multer';
 import { upload } from "../middleware/multer.js";
 import { verifyJWT } from '../middleware/auth.js';
-import { refreshAccessToken , changeCurrentPassword,updateAccountDetails} from '../controller/user.js';
+import { refresh_AccessToken , changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory,getCurrentUser} from '../controller/user.js';
+
 const router = Router()
+
 router.route("/register").post(
 upload.fields([
         {
@@ -22,7 +24,13 @@ upload.fields([
 )
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT,logout)
-router.route("/refresh-token").post(refreshAccessToken)
-router.route("/change-pwd").post(changeCurrentPassword)
+router.route("/refresh-token").post(refresh_AccessToken)
+router.route("/change-pwd").post(verifyJWT,changeCurrentPassword)
+router.route("/current-user").post(verifyJWT,getCurrentUser)
+router.route("/avatar").patch(verifyJWT,upload.single("avatar"),updateAvatarImage)
+router.route("/cover-image").patch(verifyJWT,upload.single("/coverImage"),updateCoverImage)
+router.route("/watchHistory").post(getWatchHistory)
 router.route("/updation").post(updateAccountDetails)
+router.route("/c/:username").get(verifyJWT,getUserChannelProfile)
+router.route("/history").get(verifyJWT,getWatchHistory)
 export default router;

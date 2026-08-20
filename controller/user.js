@@ -111,9 +111,8 @@ const registerUser = asyncHandler(async (req,res) =>{
     // generate access token and refresh token
     // save refresh token in db
     // return res with access token and refresh tokenh
-
 const loginUser = asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
+    const { username,password } = req.body;
     if (!username || !password) {
         return res.status(400).json({
             success: false,
@@ -136,7 +135,6 @@ const loginUser = asyncHandler(async (req, res) => {
     }
     // Generate tokens
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
-
     // Fetch user without sensitive fields
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
     const options = {
@@ -221,6 +219,15 @@ const changeCurrentPassword = asyncHandler(async(req,res) =>{
     user.password = newPassword
     await user.save({validateBeforeSave:"false"})//refrence in usermodel defined functn --> saves the updated password  
     return res.status(200).json(new ApiResponse(200,"Password changed succcesfully"))
+})
+const getCurrentUser = asyncHandler(async(req,res)=>{
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        req.user,
+        "User fetched successfully"
+    ))
 })
 const updateAccountDetails = asyncHandler(async(req,res)=>{
 const {fullName,email} = req.body
@@ -391,4 +398,4 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
         "WatchHistory fetched succesflly"
     ))
 })
-export {registerUser,loginUser,logout,refreshAccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory};
+export {registerUser,loginUser,logout,refresh_AccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory,getCurrentUser};
