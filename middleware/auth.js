@@ -3,10 +3,9 @@ import jwt from 'jsonwebtoken'
 import { User } from '../models/userModel.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import cookieParser from 'cookie-parser'
-
 // To verify incoming cookie=> AccesssToken => Decodes => Gives exact User's ID.
 export const verifyJWT = asyncHandler (async(req,res,next) =>{
-    try{
+    
         //When a client (like a browser) =>> request to your server, it automatically attaches any stored cookies associated with your domain.As previously we attached accessToken with our cookies , it comes along it  
         //Accessible when user log's in
         const token = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ","")
@@ -15,17 +14,13 @@ export const verifyJWT = asyncHandler (async(req,res,next) =>{
         throw new ApiError(401,"Unathorized request")
         }
         const decodedToken = await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
-
         console.log(decodedToken)
-
         // matches accesstokens of users and memory
-        const user = await User.findById(decodedToken._id).select("-password" ,"-refreshToken")
-        console.log(user)
+        const user = await User.findById(decodedToken._id).select("-password -refreshToken")
+        // console.log(user)
         if(!user){
             throw new ApiError(401,"Invalid Access Token")
         }
         req.user = user;
         next()
-}   catch(error){
-        throw new ApiError(401,"invalid access-token")
-}})
+})
