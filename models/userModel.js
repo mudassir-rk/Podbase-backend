@@ -52,16 +52,20 @@ const userSchema = new Schema(
 //     next()
 // })
 // Option A: Pure async/await, next hata do
-userSchema.pre("save", async function () {
-
-  if (!this.isModified("password"))
-     return;
-
-  this.password = await bcrypt.hash(this.password, 10);
-});
-userSchema.methods.isPasswordCorrect = async function(password){
-    return await bcrypt.compare(password, this.password)
-    console.log(this.password)
+try {
+    userSchema.pre("save",async function () {
+    
+      if (!this.isModified("password"))
+         return;
+    
+      this.password = await bcrypt.hash(this.password, 10);
+    });
+    userSchema.methods.isPasswordCorrect = async function(password){
+        return await bcrypt.compare(password, this.password)
+        console.log(this.password)
+    }
+} catch (error) {
+    throw new ApiError(400,"Password matching or Auth failed ")
 }
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign(

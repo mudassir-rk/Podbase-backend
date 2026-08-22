@@ -1,11 +1,11 @@
 import {Router} from 'express';
-import { registerUser} from "../controller/user.js";
-import { loginUser } from '../controller/user.js';
-import { logout } from '../controller/user.js';
+import { registerUser} from "../controller/user.controller.js";
+import { loginUser } from '../controller/user.controller.js';
+import { logout } from '../controller/user.controller.js';
 import multer from 'multer';
 import { upload } from "../middleware/multer.js";
 import { verifyJWT } from '../middleware/auth.js';
-import { refresh_AccessToken , changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory,getCurrentUser} from '../controller/user.js';
+import { refresh_AccessToken , changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory,getCurrentUser} from '../controller/user.controller.js';
 
 const router = Router()
 
