@@ -30,6 +30,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const {userId} = req.params
+    if()
     //TODO: get user playlists
 
     //Steps To get UserPlaylists
@@ -100,29 +101,20 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         },
         {   $lookup:{
                 from :"videos",
-                localField:"playlists",
-                foriegnField:"_id",
+                localField:"videos",
+                foreignField:"_id",
                 as:"videosInPlaylist"
             }
         },
         {
             $addFields:{
                 videosInPlaylistcount :{
-                    $size:"videosInPlaylist"
+                    $size:"$videosInPlaylist"
                 }
             }
         },
-        
-        // }
-        // //     $lookup:{
-        // //         from:"videos",
-        // //         localField:"playlists",
-        // //         foriegnField:"_id",
-        // //         as:"videos"
-        // //     }
-        // // 
-        // },
     ])
+    return res .status(200).json(new ApiResponse(200,playlist,"Playlists fetched by user successfully"))
 })
 
 const getPlaylistById = asyncHandler(async (req, res) => {
