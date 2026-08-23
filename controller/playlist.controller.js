@@ -31,7 +31,28 @@ const createPlaylist = asyncHandler(async (req, res) => {
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const {userId} = req.params
     //TODO: get user playlists
-
+    const playlist = await Playlist.aggregate([
+        {
+            $match:{
+                owner: new mongoose.Types.ObjectId(userId)
+            }
+        },
+        {   $lookup:{
+                from :"videos",
+                localField:"playlists",
+                foriegnField:"_id",
+                as:"videosInPlaylist"
+            }
+        },
+        {
+            $addFields:{
+                videosInPlaylistcount :{
+                    $size:"videosInPlaylist"
+                }
+            }
+        },
+    ])
+})
 })
 
 const getPlaylistById = asyncHandler(async (req, res) => {
