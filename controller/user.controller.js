@@ -7,6 +7,7 @@ import { User } from "../models/userModel.js"
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+
 // STEPS TO REGISTER USER---->>
     // get user details from frontend
     // validation - not empty
@@ -314,14 +315,15 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
             $lookup:{
                 from:"subscriptions",
                 localfield: "_id",
-                foriegnfield:"channel",
+                foreignfield:"channel",
                 as:"subscribers"
-        }},
+            }
+        },
             {
                 $lookup:{
                 from:"subscriptions",
                 localfield: "_id",
-                foriegnfield:"subscriber",
+                foreignfield:"subscriber",
                 as:"subscribedTo"
             }
         },
