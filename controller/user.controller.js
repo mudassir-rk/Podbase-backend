@@ -391,7 +391,6 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
                                     username:1,
                                     avatar:1
                                 }
-
                             }
                         ]
                        } 

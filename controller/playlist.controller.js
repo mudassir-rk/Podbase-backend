@@ -96,7 +96,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
     const playlist = await Playlist.aggregate([
         {
             $match:{
-                owner: new mongoose.Types.ObjectId(userId)
+                owner : new mongoose.Types.ObjectId(userId)
             }
         },
         {   $lookup:{
@@ -200,8 +200,10 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     // TODO: remove video from playlist
 
     const remvideo = await Playlist.findId(playlistId)
-
-     if (remvideo.owner.toString() !== req.user._id.toString()) {
+    if(!remvideo){
+        throw new ApiError(400,"playlist Id are not present")
+    }
+    if (remvideo.owner.toString() !== req.user._id.toString()) {
         throw new ApiError(403, "You are not authorized to update this playlist")
     }
     const video = await Playlist.findByIdAndUpdate(
