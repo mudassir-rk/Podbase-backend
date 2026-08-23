@@ -1,2 +1,2 @@
 # youtube like structured backend
-this project ha backend of youtube 
+this project has backend of youtube 
