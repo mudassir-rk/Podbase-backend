@@ -158,8 +158,6 @@ const deletePlaylist = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, delplaylist, "Playlist deleted successfully"))
 })
 
-
-
 // const updatePlaylist = asyncHandler(async (req, res) => {
 //     
 //     const {playlistId} = req.params
