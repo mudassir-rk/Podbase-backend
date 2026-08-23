@@ -30,9 +30,8 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
     const {userId} = req.params
-    if()
+  
     //TODO: get user playlists
-<<<<<<< HEAD
 
     //Steps To get UserPlaylists
     //1. If i apply aggregation btwn playlist and user --I get Users name(to identify who created),
@@ -94,8 +93,6 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
 // 8. Response
 // Don't forget to actually check: what if the user has zero playlists? Is an empty array a valid success response,
-=======
->>>>>>> 6d300acbef216db5efcd5dd02fd478b67dfa19e0
     const playlist = await Playlist.aggregate([
         {
             $match:{
@@ -104,33 +101,20 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         },
         {   $lookup:{
                 from :"videos",
-<<<<<<< HEAD
                 localField:"videos",
                 foreignField:"_id",
-=======
-                localField:"playlists",
-                foriegnField:"_id",
->>>>>>> 6d300acbef216db5efcd5dd02fd478b67dfa19e0
                 as:"videosInPlaylist"
             }
         },
         {
             $addFields:{
                 videosInPlaylistcount :{
-<<<<<<< HEAD
                     $size:"$videosInPlaylist"
-=======
-                    $size:"videosInPlaylist"
->>>>>>> 6d300acbef216db5efcd5dd02fd478b67dfa19e0
                 }
             }
         },
     ])
-<<<<<<< HEAD
     return res .status(200).json(new ApiResponse(200,playlist,"Playlists fetched by user successfully"))
-=======
-})
->>>>>>> 6d300acbef216db5efcd5dd02fd478b67dfa19e0
 })
 
 const getPlaylistById = asyncHandler(async (req, res) => {
@@ -311,8 +295,8 @@ const updatePlaylist = asyncHandler(async (req, res) => {
         playlistId,
         {
             $set: {
-                name,
-                description
+                name:name,
+                description:description
             }
         },
         { new: true }
