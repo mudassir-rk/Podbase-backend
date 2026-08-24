@@ -34,3 +34,23 @@ const getVideoComments = asyncHandler(async (req, res) => {
     ])
     return res .status(200).json(new ApiResponse(200,{comment,commenteduser},"Comment fetched successfully"))
 })
+const addComment = asyncHandler(async (req, res) => {
+    // TODO: add a comment to a video
+    const {videoId,userId} = req.params
+    const{content} = req.body
+    if (!content){
+        throw new ApiError(400,"content is required")
+    }
+    const comment = await Comment.create(
+        {
+            content:content,
+            video:videoId,
+            owner: userId
+        }
+    )
+})
+
+const updateComment = asyncHandler(async (req, res) => {
+    // TODO: update a comment
+   
+})
