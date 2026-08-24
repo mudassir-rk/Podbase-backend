@@ -10,6 +10,7 @@ import {User} from "../models.user.model.js"
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
     const {userId} = req.params
+    
     // const {vidoId} = req.params
     // const {likeId} = req.params
     //const {subscriptionId} = req.params
@@ -22,7 +23,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
         {
             $count: "totalVideos"
         }
-        
+
     ])
     
     const subscriberStats = await User.aggregate([
