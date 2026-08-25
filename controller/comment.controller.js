@@ -3,6 +3,7 @@ import {Comment} from "../models/comment.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
+const {videoId} = req.params
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     const {videoId} = req.params
@@ -47,10 +48,38 @@ const addComment = asyncHandler(async (req, res) => {
             video:videoId,
             owner: userId
         }
-    )
-})
+    )    return res .status(200).json(new ApiResponse(200,comment,"Comment added successfully"))
 
-const updateComment = asyncHandler(async (req, res) => {
+})
+   const updateComment = asyncHandler(async (req, res) => {
     // TODO: update a comment
-   
+    const {content} = req.body
+    const comment = await Comment.findByIdAndUpdate({
+                    video:videoId
+            },
+            {
+                $set:{
+                    content:content,
+                }
+            },
+            {
+                new:true
+            }
+    )
+    return res .status(200).json(new ApiResponse(200,"Comment updated successfully"))
+})
+const deleteComment = asyncHandler(async (req, res) => {
+    // TODO: delete a comment
+    const {videoId} = req.params
+    const comment = await Comment.findByIdAndDelete({video:videoId},
+        {
+            $unset:{
+                content:content,
+            }
+        },
+        {
+            new :true
+        }
+    ); 
+    return res .status(200).json(new ApiResponse(200,"Comment deleted successfully"))
 })
