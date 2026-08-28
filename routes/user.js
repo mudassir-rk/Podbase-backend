@@ -28,6 +28,7 @@ import  {
 } from "../controller/playlist.controller.js"
 import {
     deleteVideo,
+    getAllVideos,
     publishAVideo,
     updateVideo 
 } from '../controller/video.controller.js';
@@ -89,4 +90,5 @@ router.route("/c/up/:videoId").patch(
     updateVideo
 )
 router.route("/delVideo/:videoId").delete(deleteVideo)
+router.route("/thumbnail").get(getAllVideos)
 export default router;

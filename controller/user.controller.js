@@ -267,7 +267,8 @@ const updateAvatarImage = asyncHandler(async(req,res)=>{
         {   $set :
             {
                 avatar: avatar.url
-        }},
+            }
+        },
         {new:true}
     )
     return res.status(200).json(new ApiResponse(200,user,"avatar uploaded"))
@@ -310,7 +311,6 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
         $match:{
             username: username?.toLowerCase()?.trim()
             }
-           
         },
         //at Channel profile (the localField is that channel's unique ID).You open a giant book of Subscriptions (from).You scan the book for every row where the column says "channel" (foreignField) and matches your channel's ID.You grab all those matching users and put them into a new list on your screen called "subscribers" (as).
         {
@@ -329,7 +329,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
                 as:"subscribedTo"
             }
         },
-            {
+        {
                 $addFields:{
                     subscribersCount: { $size: "$subscribers" },
                     subscribedToCount: {
@@ -343,8 +343,8 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
                     }  
                     
                 }
-            },
-            {
+        },
+        {
     $project:{
         fullName:1,
         username:1,
@@ -356,7 +356,6 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
         email:1
     }
 }
-
     ])
     console.log("username param:", username);
     console.log("channel result:", channel);

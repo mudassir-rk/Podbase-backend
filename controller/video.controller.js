@@ -1,26 +1,38 @@
 import mongoose, {isValidObjectId} from "mongoose"
-<<<<<<< HEAD
 import {Video} from "../models/videoModel.js"
 import {User} from "../models/userModel.js"
-
 import{ verifyJWT} from "../middleware/auth.js"
-=======
-import {Video} from "../models/video.model.js"
-import {User} from "../models/user.model.js"
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
+// import {Video} from "../models/videoModel.js"
+// import {User} from "../models/user.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
-
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
     //TODO: get all videos based on query, sort, pagination
+
+    // if(query=="thumbnail"){
+        
+    // }
+
+    const videoswiththumbnail = await Video.find(req.query)
+    if(!videoswiththumbnail){
+        throw new ApiError(400,"Query fetching for Video-thumbnail failed")
+    }
+    const pg = Number(req.query.page) || 1;
+    const lmt = Number(req.query.limit) || 3;
+
+    const skip = (pg - 1)*lmt;
+
+    const apiData = apiData.skip(skip).limit(limit);
+    
+    return res.status(200).json(new ApiResponse(200,"Video shown success"))
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
+
     // TODO: get video, upload to cloudinary, create video
     //const {videId}
     // const {userId} = req.params
@@ -67,16 +79,15 @@ const publishAVideo = asyncHandler(async (req, res) => {
         }
     )
     return res.status(200).json(new ApiResponse(200,newVideo,"Video published successfully "))
-=======
-    const { title, description} = req.body
-    // TODO: get video, upload to cloudinary, create video
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
+
+    
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
-<<<<<<< HEAD
+    const { title, description} = req.body
+    // TODO: get video, upload to cloudinary, create video
     // const video = await Video.findById(videoId)
     const video = await Video.findById(videoId)
     if(!video){
@@ -86,13 +97,13 @@ const getVideoById = asyncHandler(async (req, res) => {
         throw new ApiError(403, "You are not authorized to get this  video")}
     
     return res .status(200).json(new ApiResponse(200,video,"Video fetched by Id successfully"))
-=======
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
+
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
+    //TODO: update video details like title, description, thumbnail
     const { videoId } = req.params
-<<<<<<< HEAD
+
     const { title, description } = req.body
 
     if (!videoId) {
@@ -152,15 +163,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
     }
     const video = await Video.findByIdAndDelete(videoId)
     return res.status(200).json(new ApiResponse(200,"Video Deleted successfully"))
-=======
-    //TODO: update video details like title, description, thumbnail
-
-})
-
-const deleteVideo = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    //TODO: delete video
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
+    
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
