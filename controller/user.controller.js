@@ -53,6 +53,7 @@ const registerUser = asyncHandler(async (req,res) =>{
             success:false,
             message:"Please provide all the required fields"
         })}
+    // If no User present similar OR no any First user It simply --> it gives null     
     const userExists = await User.findOne({$or:[{email:email},{username:username}]})
     if(userExists){
         return res.status(409).json({
@@ -65,6 +66,7 @@ const registerUser = asyncHandler(async (req,res) =>{
     if (!req.files || !req.files.avatar || req.files.avatar.length === 0) {
     throw new ApiError(400, "Avatar file is required");
     }
+
     const avatarLocalPath = req.files.avatar[0].path;
 
     if(!req.files || !req.files.coverImage || req.files.coverImage.length === 0) {
@@ -300,41 +302,38 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 });
 const getUserChannelProfile = asyncHandler(async(req,res)=>{
     const {username}= req.params
-        if(!username?.trim){
+        if(!username?.trim()){  
         throw new ApiError(400,"username is missing")
     }
     // match method in aggregationUser.find({username})
-    const channel = await User.aggregate([
-        {
-            $match:{
-                username:username?.toLowercase()
+    const channel = await User.aggregate([{
+        $match:{
+            username: username?.toLowerCase()?.trim()
             }
+           
         },
         //at Channel profile (the localField is that channel's unique ID).You open a giant book of Subscriptions (from).You scan the book for every row where the column says "channel" (foreignField) and matches your channel's ID.You grab all those matching users and put them into a new list on your screen called "subscribers" (as).
         {
             $lookup:{
                 from:"subscriptions",
-                localfield: "_id",
-                foreignfield:"channel",
+                localField: "_id",
+                foreignField:"channel",
                 as:"subscribers"
             }
         },
         {
             $lookup:{
                 from:"subscriptions",
-                localfield: "_id",
-                foreignfield:"subscriber",
+                localField: "_id",
+                foreignField:"subscriber",
                 as:"subscribedTo"
             }
         },
             {
                 $addFields:{
-                    subscribersCount:{
-                        $size:"$subscribers"
-                    },
-                    subscribedToCount:{
-                        $size:"$subscribedTo"
-                    },
+                    subscribersCount: { $size: "$subscribers" },
+                    subscribedToCount: {
+                                $size: "$subscribedTo" },
                     isSubscribed:{
                         $cond:{
                             if:{$in:[req.user?._id,"$subscribers.subscriber"]},//in array of subs find for object of sub
@@ -345,23 +344,26 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
                     
                 }
             },
-            {   $project:{
-                    fullName:1,
-                    username:1,
-                    subscriberCount:1,
-                    channelSubscribedToCount:1,
-                    isSubscribed:1,
-                    avatar:1,
-                    coverImage:1,
-                    email:1
-                }
-            }
+            {
+    $project:{
+        fullName:1,
+        username:1,
+        subscribersCount:1,
+        subscribedToCount:1,
+        isSubscribed:1,
+        avatar:1,
+        coverImage:1,
+        email:1
+    }
+}
 
     ])
-    if(!channel?.length){
-        throw new ApiError(404,"channel does not exists")
-    }
-return res.status(200).json(new ApiError(200,channel[0],"User channel created fetched successfully"))
+    console.log("username param:", username);
+    console.log("channel result:", channel);
+    // if(!channel?.length){
+    //     throw new ApiError(404,"channel does not exists")
+    // }
+return res.status(200).json(new ApiResponse(200,channel,"User channel created fetched successfully"))
 })
 const getWatchHistory = asyncHandler(async(req,res)=>{
     const user = await User.aggregate([
@@ -375,14 +377,14 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
             $lookup:{ //from users to videos
                 from:"videos",
                 localField:"watchHistory",
-                foriegnField:"_id",
+                foreignField:"_id",
                 as:"watchHist",
                 pipeline:[
-                    {//from video to users
+                    {   //from video to users
                        $lookup:{
                         from:"users",
                         localField:"owner",
-                        foriegnField:"_id",
+                        foreignField:"_id",
                         as:"owner",
                         pipeline:[
                             {
@@ -401,11 +403,13 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
         {//to easier to find owner from array
             $addFields:{
                 owner:{
-                    $first:"owner"
+                    $first:"$owner"
                 }
             }
         }
     ])
+    //console.log(user)
+    //console.log(owner)
     return res.status(200).json(new ApiResponse(200,user[0].watchHistory,
         "WatchHistory fetched succesflly"
     ))
