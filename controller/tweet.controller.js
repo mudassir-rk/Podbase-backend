@@ -8,6 +8,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 const createTweet = asyncHandler(async (req, res) => {
     //TODO: create tweet
     const {content} = req.body
+
     if(!content){
         throw new ApeError(400,"Content required")
     }
@@ -125,10 +126,13 @@ const deleteTweet = asyncHandler(async (req, res) => {
             $unset:{
                 content:content,
             }
-        },{
+        },
+        {
             new:true
         }
-    );return res .status(200).json(new ApiResponse(200,deletedTweet,"Tweet deleted Successfully"))
+    );
+    return res 
+    .status(200).json(new ApiResponse(200,deletedTweet,"Tweet deleted Successfully"))
 })
 
 export {

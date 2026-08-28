@@ -1,8 +1,8 @@
-import mongoose,{Schema} from "mongooose";
+import mongoose,{Schema} from "mongoose";
 
 const videoSchema = new Schema(
     {
-        videoFile:{
+        video:{
             type:String,
             required:true
         },
@@ -20,7 +20,7 @@ const videoSchema = new Schema(
         },
         duration:{
             type:Number,
-            required:true
+            //required:true
         },
         views:{
             type:Number,
@@ -36,4 +36,4 @@ const videoSchema = new Schema(
         },
 },{timestamps:true})
 
-export default mongoose.model("Video",videoSchema)
+export const Video = mongoose.model("Video",videoSchema)

@@ -10,10 +10,9 @@ import {User} from "../models.user.model.js"
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
     const {userId} = req.params
+    //tweetId → identifies which tweet document to fetch (usually from req.params)
+    //owner (on that tweet document) → identifies which user created it
     
-    // const {vidoId} = req.params
-    // const {likeId} = req.params
-    //const {subscriptionId} = req.params
     const videoStats = await Video.aggregate([
         {
             $match: {
@@ -23,7 +22,6 @@ const getChannelStats = asyncHandler(async (req, res) => {
         {
             $count: "totalVideos"
         }
-
     ])
     
     const subscriberStats = await User.aggregate([
@@ -75,6 +73,30 @@ const getChannelVideos = asyncHandler(async (req, res) => {
                 totalViews: { $sum: "$views" }
             }
         },
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "ownerDetails"
+                        }
+                    },
+                    {
+                        $addFields: {
+                            ownerDetails: {
+                                $first: "$ownerDetails"
+                            }
+                        }
+                    },
+                {
+                $project:{
+                    fullName:1,
+                    username:1,
+                    avatar:1,
+                    coverImage:1,
+                    email:1
+                }
+            }
     ]) 
     return res
     .status(200)

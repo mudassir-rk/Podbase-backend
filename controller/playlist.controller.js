@@ -19,8 +19,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
     //TODO: create playlist
     const newplaylist = await Playlist.create({
         name: name,
-        description: description,
-        
+        description: description, 
     })
     return res 
     .status(200)
@@ -32,31 +31,6 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
     const {userId} = req.params
   
     //TODO: get user playlists
-
-    //Steps To get UserPlaylists
-    //1. If i apply aggregation btwn playlist and user --I get Users name(to identify who created),
-    //Use aggregate() when you need to do things find() simply can't:
-
-// Joining + reshaping data from multiple collections in one go
-// e.g. "Get a video, plus its owner's info, plus like count, plus comment count — all combined into one clean object" → $lookup + $project etc.
-// Computed/derived fields
-// e.g. "total number of videos in a channel", "total subscriber count", "isSubscribed: true/false for the logged-in user" → needs $size, $in, $cond, $addFields.
-// Grouping and math across documents
-// e.g. "total views this channel has ever gotten", "average watch time", "count of videos per category" → $group, $sum, $avg.
-// Complex filtering combined with joins
-// e.g. "get all videos where owner is subscribed to by user X, sorted by views" — filtering after joining data from another collection.
-// Multi-stage data transformation
-// Where you need step-by-step reshaping: match → lookup → unwind → group → project → sort — a pipeline of operations, not a single lookup.
-
-// Simple rule of thumb:
-
-// If you're just fetching or updating "as-is" data from one collection → plain query.
-// If you need to combine, compute, or transform data from multiple collections into a new shape → aggregate.
-
-// For something like addVideoToPlaylist, you're just pushing an ID into an array — that's a write, so plain findByIdAndUpdate is correct. But something like "get playlist with full video details and owner details populated" — that would need aggregate().
-
-// how i can getuserplaylist using userId , steps to implement 
-
 
 // 1. Decide what "get user playlist" actually means
 // Do you want:
@@ -93,6 +67,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
 // 8. Response
 // Don't forget to actually check: what if the user has zero playlists? Is an empty array a valid success response,
+
     const playlist = await Playlist.aggregate([
         {
             $match:{
