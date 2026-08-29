@@ -90,5 +90,11 @@ router.route("/c/up/:videoId").patch(
     updateVideo
 )
 router.route("/delVideo/:videoId").delete(deleteVideo)
-router.route("/thumbnail").get(getAllVideos)
+// router.route("/thumbnail").get(getAllVideos)
+
+// GET /api/v1/products?company=apple&name=iphone&featured=true
+
+
 export default router;
+
+
