@@ -13,22 +13,18 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
     //TODO: get all videos based on query, sort, pagination
 
-    // if(query=="thumbnail"){
-        
-    // }
-
-    const videoswiththumbnail = await Video.find(req.query)
-    if(!videoswiththumbnail){
-        throw new ApiError(400,"Query fetching for Video-thumbnail failed")
-    }
     const pg = Number(req.query.page) || 1;
     const lmt = Number(req.query.limit) || 3;
 
     const skip = (pg - 1)*lmt;
+    const videoswiththumbnail = await Video.find(req.query
+       .skip(skip).limit(lmt)
+    )
 
-    const apiData = apiData.skip(skip).limit(limit);
-    
-    return res.status(200).json(new ApiResponse(200,"Video shown success"))
+    if(!videoswiththumbnail){
+        throw new ApiError(400,"Query fetching for Video-thumbnail failed")
+    }
+    return res.status(200).json(new ApiResponse(200,videoswiththumbnail,"Video shown success"))
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
