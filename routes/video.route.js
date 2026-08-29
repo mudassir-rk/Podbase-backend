@@ -1,9 +1,9 @@
-// import {Router} from 'express';
-// import multer from 'multer';
-// import { getAllVideos } from "../controllers/video.controller.js";
+import {Router} from 'express';
+import multer from 'multer';
+import { getAllVideos } from "../controller/video.controller.js";
 
-// const router = Router();
+const router = Router();
 
-// router.route("/").get(getAllVideos);
+router.route("/").get(getAllVideos);
 
-// export default  router;
+export {router as videoRouter};

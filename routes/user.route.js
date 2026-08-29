@@ -95,6 +95,6 @@ router.route("/delVideo/:videoId").delete(deleteVideo)
 // GET /api/v1/products?company=apple&name=iphone&featured=true
 
 
-export default router;
+export { router as userRouter };
 
 
