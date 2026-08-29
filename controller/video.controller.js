@@ -58,7 +58,7 @@ return res.status(200).json({
     currentPage: pg,
     totalPages,
     totalVideos: count
-})
+    })
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
