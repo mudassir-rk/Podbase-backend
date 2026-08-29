@@ -13,18 +13,52 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
     //TODO: get all videos based on query, sort, pagination
 
-    const pg = Number(req.query.page) || 1;
-    const lmt = Number(req.query.limit) || 3;
+//     const pg = Number(req.query.page) || 1;
+//     const lmt = Number(req.query.limit) || 2;
+//     const sorting = req.query.sortBy|| "-createdAt";
 
-    const skip = (pg - 1)*lmt;
-    const videoswiththumbnail = await Video.find(req.query
-       .skip(skip).limit(lmt)
-    )
+//     const filter = {} 
+    
+//     const count = Video.countDocuments()
 
-    if(!videoswiththumbnail){
-        throw new ApiError(400,"Query fetching for Video-thumbnail failed")
-    }
-    return res.status(200).json(new ApiResponse(200,videoswiththumbnail,"Video shown success"))
+//     const skip = (pg - 1)*lmt;
+//     const videoswiththumbnail = await Video.find(req.query)
+//     .sort(sorting)
+//     .skip(skip)
+//     .limit(lmt)
+
+//     if(!videoswiththumbnail){
+//         throw new ApiError(400,"Query fetching for Video-thumbnail failed")
+//     }
+//     return res.status(200).json({videoswiththumbnail,
+//     currentPage: pg,
+//     totalPages,
+//     totalVideos: count})
+// })
+
+const pg = Number(req.query.page) || 1;
+const lmt = Number(req.query.limit) || 3;
+const skip = (pg - 1) * lmt;
+
+const filter = {query}; // build your filter as needed
+
+// 1. Get the actual page of data
+const videos = await Video.find(filter)
+    .skip(skip)
+    .limit(lmt);
+
+// 2. Get the TOTAL count of matching documents (ignoring skip/limit)
+const count = await Video.countDocuments(filter);
+
+// 3. Now calculate totalPages
+const totalPages = Math.ceil(count / lmt);
+
+return res.status(200).json({
+    videos,
+    currentPage: pg,
+    totalPages,
+    totalVideos: count
+})
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -151,6 +185,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, video, "Video updated successfully"))
 })
+
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: delete video
