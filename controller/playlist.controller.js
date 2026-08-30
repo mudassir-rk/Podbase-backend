@@ -7,7 +7,6 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import { User } from "../models/userModel.js"
 
-
 const createPlaylist = asyncHandler(async (req, res) => {
     const {name, description} = req.body
     if(!name){

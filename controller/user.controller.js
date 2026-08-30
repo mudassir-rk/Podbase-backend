@@ -87,7 +87,7 @@ const registerUser = asyncHandler(async (req,res) =>{
     if (!avatar) {
         return res.status(400).json({
             success: false,
-            message: "Avatar file is required"
+            message: "Avatar file is required while uploading on cloudinary"
         })
     }
     const newUser = await User.create({ // create user in db
