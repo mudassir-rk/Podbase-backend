@@ -61,11 +61,12 @@ router.route("/watchHistory").post(getWatchHistory)
 router.route("/updation").post(updateAccountDetails)
 router.route("/c/:username").get(verifyJWT,getUserChannelProfile)
 router.route("/history").get(verifyJWT,getWatchHistory)
+
 router.route("/playlist").post(createPlaylist)
 router.route("/c/:platlistId").get(verifyJWT,getPlaylistById)
 
+router.route("/c/profile/:username").get(verifyJWT,getUserChannelProfile)
 router.route("/c/subscription/:channelId").get(verifyJWT,toggleSubscription)
-
 
 export { router as userRouter };
 
