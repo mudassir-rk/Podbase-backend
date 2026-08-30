@@ -3,9 +3,11 @@ import multer from 'multer';
 import { upload } from "../middleware/multer.js";
 import { verifyJWT } from '../middleware/auth.js';
 
-import { registerUser} from "../controller/user.controller.js";
-import { loginUser } from '../controller/user.controller.js';
-import { logout } from '../controller/user.controller.js';
+import {
+    registerUser,
+    logout,
+    loginUser
+} from "../controller/user.controller.js";
 
 import { 
     refresh_AccessToken ,
@@ -33,7 +35,9 @@ import  {
     getUserChannelSubscribers,
     getSubscribedChannels
 } from "../controller/subscription.controller.js"
+
 import { Video } from '../models/videoModel.js';
+import { addDetails } from '../controller/shows.controller.js';
 
 const router = Router()
 
@@ -68,6 +72,7 @@ router.route("/c/:platlistId").get(verifyJWT,getPlaylistById)
 router.route("/c/profile/:username").get(verifyJWT,getUserChannelProfile)
 router.route("/c/subscription/:channelId").get(verifyJWT,toggleSubscription)
 router.route("/c/subschannel/:channelId").get(verifyJWT,getUserChannelSubscribers)
+router.route("/shows").post(verifyJWT,addDetails)
 
 export { router as userRouter };
 

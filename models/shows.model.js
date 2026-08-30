@@ -10,7 +10,7 @@ const showsSchema = new Schema(
         type: String,
         required:true
     },
-    desccription:{
+    description:{
         type:String,
         required:true,
     },

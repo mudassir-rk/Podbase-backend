@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import { Shows } from "../models/shows.model";
-import { asyncHandler } from "../utils/asyncHandler";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
+import { Shows } from "../models/shows.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 //1.crud on cover image
 //2.crud on title
@@ -11,7 +11,7 @@ import { ApiResponse } from "../utils/ApiResponse";
 const addDetails = asyncHandler(async(req,res)=>{
     const {title,description} = req.body 
     if(!title || !description){
-        return res.status(400).json(new ApiResponse(400,"Fields requires for title and description"))
+        throw new ApiError(400,"Fields requires for title and description")
     }
     const creation = await Shows.create({
         title:title,
@@ -19,16 +19,19 @@ const addDetails = asyncHandler(async(req,res)=>{
         owner:req.user._id,
         //coverimageurl
     })
+    return res.status(200).json(new ApiResponse(200,creation,"added details successfully"))
 })
 
-if(!req.files || !req.files.coverImage || req.files.coverImage.length===0){
-    throw new ApiError(401,"CoverImage file is required")
-}
-const CoverImageLocalPath = req.files.coverImage[0].path;
+// if(!req.files || !req.files.coverImage || req.files.coverImage.length===0){
+//     throw new ApiError(401,"CoverImage file is required")
+// }
+// const CoverImageLocalPath = req.files.coverImage[0].path;
 
-const coverImage = await uploadOnCloudinary(CoverImageLocalPath)
-if(!coverImage){
-    return res.status(400).json(new ApiResponse(400,"Error while uploading cover img on cloudinary"))
-}
+// const coverImage = await uploadOnCloudinary(CoverImageLocalPath)
+// if(!coverImage){
+//     // return res.status(400).json(new ApiResponse(400,"Error while uploading cover img on cloudinary"))
+// }
 
 // check what happen if someone reuploaded  the coverImage
+
+export {addDetails}
