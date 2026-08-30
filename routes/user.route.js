@@ -65,37 +65,6 @@ router.route("/playlist").post(createPlaylist)
 router.route("/c/:platlistId").get(verifyJWT,getPlaylistById)
 
 router.route("/c/subscription/:channelId").get(verifyJWT,toggleSubscription)
-// router.route("/plusVideo").post(
-//   verifyJWT,
-//   upload.fields([
-//     {
-//         name: "video",
-//         maxCount: 1   
-//     },
-//     {
-//         name:"thumbnail",
-//         maxcount:1
-//     }
-// ]),
-//   publishAVideo
-// )
-// router.route("/c/up/:videoId").patch(
-//     verifyJWT,
-//     upload.fields([
-
-//     {   name: "thumbnail",
-//         maxCount: 1 
-//     },
-//     {   name:"video",
-//         maxCount:1
-//     },
-// ]),
-//     updateVideo
-// )
-// router.route("/delVideo/:videoId").delete(deleteVideo)
-// router.route("/thumbnail").get(getAllVideos)
-
-// GET /api/v1/products?company=apple&name=iphone&featured=true
 
 
 export { router as userRouter };
