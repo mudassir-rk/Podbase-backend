@@ -12,8 +12,9 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     if(!isValidObjectId(channelId)){
         throw new ApiError(400,"channelId is not Valid")
     }
-    // const subs = await Subscription.findById(SubscriptionId
-    // )
+    if(channelId.toString() !== req.user._id.toString()){
+        // throw new ApiError(400,"U are not allowed to subscribe Yourself")
+    
     const subs = await Subscription.findOne({
         channel:channelId,
         subscriber:req.user._id,
@@ -40,19 +41,26 @@ const toggleSubscription = asyncHandler(async (req, res) => {
             })
     }
     return res.status(200).json(new ApiResponse(200,subs,"Subscription"))
+    }
+    else{
+        throw new ApiError(400,"u are not allowed to sub")
+    }
 })
 
 // controller to return subscriber list of a channel
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     const {channelId} = req.params
+    
     if(!isValidObjectId(channelId)){
         throw new ApiError(400,"Invalid channel Id")
     }
-    const subscribers = await Subscription.find({
-        channel:channelId,
-        subscriber:req.user._id,
-    })
     
+    const subscribers = await Subscription.find({
+        channel :channelId,
+        subscriber :req.user._id,
+    })
+    return res .status(200).json(new ApiResponse(200,subscribers,"list of channels who u subscribes"))
+
 })
 
 // controller to return channel list to which user has subscribed

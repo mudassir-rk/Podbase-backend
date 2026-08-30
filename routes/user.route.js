@@ -67,6 +67,7 @@ router.route("/c/:platlistId").get(verifyJWT,getPlaylistById)
 
 router.route("/c/profile/:username").get(verifyJWT,getUserChannelProfile)
 router.route("/c/subscription/:channelId").get(verifyJWT,toggleSubscription)
+router.route("/c/subschannel/:channelId").get(verifyJWT,getUserChannelSubscribers)
 
 export { router as userRouter };
 
