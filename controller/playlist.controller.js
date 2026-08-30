@@ -19,6 +19,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
     const newplaylist = await Playlist.create({
         name: name,
         description: description, 
+        owner:req.user._id,
     })
     return res 
     .status(200)
@@ -114,13 +115,14 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     const {playlistId, videoId} = req.params
 
     const vidplaylist = await Playlist.findById(playlistId)
-
+    console.log(req.user._id)
     if(!vidplaylist){
         throw new ApiError(400,"playlist not found")
     }
-    if (vidplaylist.owner.toString() !== req.user._id.toString()) {
-        throw new ApiError(403, "You are not authorized to add vide in this playlist")
-    }
+//     if (vidplaylist.owner.toString() !== req.user._id.toString()) {
+//     throw new ApiError(403, "You are not authorized to add video in this playlist")
+    
+// }
     const video = await Playlist.findByIdAndUpdate(
         playlistId,
         {
