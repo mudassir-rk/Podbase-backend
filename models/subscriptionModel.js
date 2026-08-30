@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {Schema} from "mongoose" 
 const subscriptionSchema = new Schema({
     subscriber:{
         type: Schema.Types.ObjectId,

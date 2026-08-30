@@ -1,6 +1,6 @@
 import mongoose, {isValidObjectId} from "mongoose"
-import {User} from "../models/user.model.js"
-import { Subscription } from "../models/subscription.model.js"
+import {User} from "../models/userModel.js"
+import { Subscription } from "../models/subscriptionModel.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -12,7 +12,24 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     if(!isValidObjectId(channelId)){
         throw new ApiError(400,"channelId is not Valid")
     }
-    const subs = await Subscription({channelId : req.user._id})
+    // const subs = await Subscription.findById(SubscriptionId
+    // )
+    const subs = await Subscription.findOne({
+        channel:channeId,
+        subscriber:req.user._id,
+    })
+    //whole bcz i want doc Id with channelID
+    if(!subs){
+        await Subscription.findByIdAndDelete(subs._id)
+    }
+    else{
+        await Subscription.create(
+            {
+                channel:channelId,
+                subscriber:req.user._id,
+            })
+    }
+    return res.status(200).json(new ApiResponse(200,subs,"Subscription"))
 })
 
 // controller to return subscriber list of a channel

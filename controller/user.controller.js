@@ -312,7 +312,6 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
             username: username?.toLowerCase()?.trim()
             }
         },
-        //at Channel profile (the localField is that channel's unique ID).You open a giant book of Subscriptions (from).You scan the book for every row where the column says "channel" (foreignField) and matches your channel's ID.You grab all those matching users and put them into a new list on your screen called "subscribers" (as).
         {
         // interchange concept bcz --> channel  + subxiber = 1 Document in which channel may be high proportion of same no. and user may  be high prption of diffrnt no.
         // so count same thing distinct come with itself from docm
