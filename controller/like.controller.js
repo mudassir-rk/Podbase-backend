@@ -80,7 +80,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 const getLikedVideos = asyncHandler(async (req, res) => {
     //TODO: get all liked videos
     // const likedVideo = await Video.find({
-    // })
+    //})
     
     // means show all those document of Video in which there is Id of that video in like model 
     // const likedVideo = await Like.findById(
@@ -89,9 +89,9 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     //     }
     // ).select("video")
     // const video = await Video.findById(likedVideo).select("video thumbnail")
-//
-// OPTION--1
-//     const video = await Like.aggregate([{
+    //
+    // OPTION--1
+    //     const video = await Like.aggregate([{
 //         $match:{
 //             likedBy: new mongoose.Types.ObjectId(req.user._id),
 //         }
