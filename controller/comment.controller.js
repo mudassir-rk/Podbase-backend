@@ -3,9 +3,7 @@ import {Comment} from "../models/comment.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
-<<<<<<< HEAD
 import { User} from "../models/userModel.js"
-const {videoId} = req.params
 
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
@@ -15,11 +13,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
     // Pagination unused — You pull page and limit from the query string but never actually use them anywhere (no .skip(), .limit(), or aggregation paginate). So they're dead code right now.
     // No existence check for the video — If someone passes a videoId that doesn't exist, you still just query comments (which will return empty) instead of telling the user "video not found."
     // No owner/user info attached — Usually you'd want to show who wrote each comment (populate the owner field), which isn't happening here.
-=======
 const {videoId} = req.params
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
     const {videoId} = req.params
     const {userId} = req.params
     if(!videoId){
@@ -49,17 +45,15 @@ const getVideoComments = asyncHandler(async (req, res) => {
     ])
     return res .status(200).json(new ApiResponse(200,{comment,commenteduser},"Comment fetched successfully"))
 })
+})
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
-<<<<<<< HEAD
     //     addComment
     // No response sent back — After Comment.create(...), there's no res.status(...).json(...). The request will just hang forever from the client's perspective — this is the biggest bug.
     // Missing owner field — You're not saving who made the comment (usually req.user._id from auth middleware). So you'll have comments with no author.
     // No validation on content — If content is empty or missing, you're still trying to create a comment. Should check if(!content?.trim()) and throw an ApiError.
     // No check that the video exists — Similar to above, you could be attaching a comment to a videoId that doesn't exist in the DB at all.
     // No error handling if Comment.create fails — Not necessarily needed since asyncHandler will catch thrown errors, but if create returns falsy/null (rare, but possible in some edge cases) you don't guard against it.
-=======
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
     const {videoId,userId} = req.params
     const{content} = req.body
     if (!content){
@@ -71,14 +65,9 @@ const addComment = asyncHandler(async (req, res) => {
             video:videoId,
             owner: userId
         }
-<<<<<<< HEAD
+
     );
     return res .status(200).json(new ApiResponse(200,comment,"Comment added successfully"))
-})
-=======
-    )    return res .status(200).json(new ApiResponse(200,comment,"Comment added successfully"))
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
-
 })
    const updateComment = asyncHandler(async (req, res) => {
     // TODO: update a comment
@@ -112,7 +101,6 @@ const deleteComment = asyncHandler(async (req, res) => {
     ); 
     return res .status(200).json(new ApiResponse(200,"Comment deleted successfully"))
 })
-<<<<<<< HEAD
 
 export {
     getVideoComments, 
@@ -120,5 +108,3 @@ export {
     updateComment,
     deleteComment
     }
-=======
->>>>>>> 740832c0bd5c09bc16be860161ff8ce627d78d31
