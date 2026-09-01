@@ -20,15 +20,6 @@ const toggleFollow = asyncHandler(async (req, res) => {
         following: creatorId,
         follower: req.user._id,
     })
-    // existingFollow is either null or:
-    // {
-    //   _id: "64abc123...",
-    //   following: "64def456...",
-    //   follower: "64ghi789...",
-    //   createdAt: "2026-08-15T10:30:00Z",
-    //   updatedAt: "2026-08-15T10:30:00Z",
-    //   __v: 0
-    // }
 
     if(existingFollow){
         await Follow.findByIdAndDelete(existingFollow._id)
@@ -47,7 +38,6 @@ const toggleFollow = asyncHandler(async (req, res) => {
     )
 })
 
-// controller to return the list of followers of a creator
 const getUserCreatorFollowers = asyncHandler(async (req, res) => {
     const {creatorId} = req.params
 
@@ -64,7 +54,6 @@ const getUserCreatorFollowers = asyncHandler(async (req, res) => {
     )
 })
 
-// controller to return the list of creators a user follows
 const getFollowedCreators = asyncHandler(async (req, res) => {
     const {followerId} = req.params
 

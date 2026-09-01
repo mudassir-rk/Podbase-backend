@@ -8,11 +8,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {User} from "../models/userModel.js"
 
 const getCreatorStats = asyncHandler(async (req, res) => {
-    // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
     const {userId} = req.params
-
-    //tweetId → identifies which tweet document to fetch (usually from req.params)
-    //owner (on that tweet document) → identifies which user created it
 
     const videoStats = await Video.aggregate([
         {

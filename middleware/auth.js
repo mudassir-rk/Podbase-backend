@@ -3,12 +3,10 @@ import jwt from 'jsonwebtoken'
 import { User } from '../models/userModel.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import cookieParser from 'cookie-parser'
-// To verify incoming cookie=> AccesssToken => Decodes => Gives exact User's ID.
+
 export const verifyJWT = asyncHandler (async(req,res,next) =>{
     
-        //When a client (like a browser) =>> request to your server, it automatically attaches any stored cookies associated with your domain.As previously we attached accessToken with our cookies , it comes along it  
-        //Accessible when user log's in
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
+    const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
         console.log("Header:", req.header("Authorization")) // <- this is probably your log
         console.log(token)
         if(!token){

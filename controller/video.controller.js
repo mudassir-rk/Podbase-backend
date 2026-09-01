@@ -2,8 +2,6 @@ import mongoose, {isValidObjectId} from "mongoose"
 import {Video} from "../models/videoModel.js"
 import {User} from "../models/userModel.js"
 import{ verifyJWT} from "../middleware/auth.js"
-// import {Video} from "../models/videoModel.js"
-// import {User} from "../models/user.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -11,46 +9,20 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-    //TODO: get all videos based on query, sort, pagination
-
-//     const pg = Number(req.query.page) || 1;
-//     const lmt = Number(req.query.limit) || 2;
-//     const sorting = req.query.sortBy|| "-createdAt";
-
-//     const filter = {} 
-    
-//     const count = Video.countDocuments()
-
-//     const skip = (pg - 1)*lmt;
-//     const videoswiththumbnail = await Video.find(req.query)
-//     .sort(sorting)
-//     .skip(skip)
-//     .limit(lmt)
-
-//     if(!videoswiththumbnail){
-//         throw new ApiError(400,"Query fetching for Video-thumbnail failed")
-//     }
-//     return res.status(200).json({videoswiththumbnail,
-//     currentPage: pg,
-//     totalPages,
-//     totalVideos: count})
-// })
 
 const pg = Number(req.query.page) || 1;
 const lmt = Number(req.query.limit) || 3;
 const skip = (pg - 1) * lmt;
 
-const filter = {query}; // build your filter as needed
+const filter = {query}; 
 
-// 1. Get the actual page of data
+
 const videos = await Video.find(filter)
     .skip(skip)
     .limit(lmt);
 
-// 2. Get the TOTAL count of matching documents (ignoring skip/limit)
 const count = await Video.countDocuments(filter);
 
-// 3. Now calculate totalPages
 const totalPages = Math.ceil(count / lmt);
 
 return res.status(200).json({
@@ -62,19 +34,6 @@ return res.status(200).json({
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-
-    // TODO: get video, upload to cloudinary, create video
-    //const {videId}
-    // const {userId} = req.params
-    
-    // if(!videoId){
-    //     throw new ApiError(400,"videoId required")
-    // }
-    // No owner ship 
-    // const auth = await Video.findById(videoId)
-
-    // if (auth.owner.toString() !== req.user._id.toString()) {
-    // throw new ApiError(403, "You are not authorized to update video")}
 
     const { title, description} = req.body
     if(!title || !description){
@@ -115,10 +74,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: get video by id
+    
     const { title, description} = req.body
-    // TODO: get video, upload to cloudinary, create video
-    // const video = await Video.findById(videoId)
+    
     const video = await Video.findById(videoId)
     if(!video){
         throw new ApiError(400,"Videoid field not found in get")
@@ -131,7 +89,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
-    //TODO: update video details like title, description, thumbnail
+    
     const { videoId } = req.params
 
     const { title, description } = req.body
@@ -188,7 +146,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    //TODO: delete video
+   
     if(!videoId){
         throw new ApiError(400,"video id not found")
     }

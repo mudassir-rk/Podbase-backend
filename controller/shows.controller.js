@@ -1,40 +1,3 @@
-// import mongoose from "mongoose"
-// import { Shows } from "../models/shows.model.js";
-// import { asyncHandler } from "../utils/asyncHandler.js";
-// import { ApiError } from "../utils/ApiError.js";
-// import { ApiResponse } from "../utils/ApiResponse.js";
-
-// //1.crud on cover image
-// //2.crud on title
-// //3.crud on description
-
-// const addDetails = asyncHandler(async(req,res)=>{
-//     const {title,description} = req.body 
-//     if(!title || !description){
-//         throw new ApiError(400,"Fields requires for title and description")
-//     }
-//     const creation = await Shows.create({
-//         title:title,
-//         description:description,
-//         owner:req.user._id,
-//         //coverimageurl
-//     })
-//     return res.status(200).json(new ApiResponse(200,creation,"added details successfully"))
-// })
-
-// // if(!req.files || !req.files.coverImage || req.files.coverImage.length===0){
-// //     throw new ApiError(401,"CoverImage file is required")
-// // }
-// // const CoverImageLocalPath = req.files.coverImage[0].path;
-
-// // const coverImage = await uploadOnCloudinary(CoverImageLocalPath)
-// // if(!coverImage){
-// //     // return res.status(400).json(new ApiResponse(400,"Error while uploading cover img on cloudinary"))
-// // }
-
-// // check what happen if someone reuploaded  the coverImage
-
-// export {addDetails}
 import mongoose, {isValidObjectId} from "mongoose"
 import {Show} from "../models/shows.model.js"
 import {ApiError} from "../utils/ApiError.js"
@@ -42,7 +5,6 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 
-// create a new show
 const addDetails = asyncHandler(async (req, res) => {
     const {title, description} = req.body
 
@@ -78,7 +40,7 @@ const addDetails = asyncHandler(async (req, res) => {
     )
 })
 
-// get a single show by id
+
 const getShowById = asyncHandler(async (req, res) => {
     const {showId} = req.params
 
@@ -97,7 +59,6 @@ const getShowById = asyncHandler(async (req, res) => {
     )
 })
 
-// update show details (title, description, coverImage)
 const updateShow = asyncHandler(async (req, res) => {
     const {showId} = req.params
     const {title, description} = req.body
@@ -140,7 +101,6 @@ const updateShow = asyncHandler(async (req, res) => {
     )
 })
 
-// delete a show
 const deleteShow = asyncHandler(async (req, res) => {
     const {showId} = req.params
 
