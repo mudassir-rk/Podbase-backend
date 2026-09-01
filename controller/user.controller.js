@@ -301,72 +301,142 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, user, "CoverImage uploaded successfully"));
 });
-const getUserChannelProfile = asyncHandler(async(req,res)=>{
-    const {username}= req.params
-        if(!username?.trim()){  
-        throw new ApiError(400,"username is missing")
-    }
-    // match method in aggregationUser.find({username})
-    const channel = await User.aggregate([{
-        $match:{
-            username: username?.toLowerCase()?.trim()
-            }
-        },
-        {
-        // interchange concept bcz --> channel  + subxiber = 1 Document in which channel may be high proportion of same no. and user may  be high prption of diffrnt no.
-        // so count same thing distinct come with itself from docm
-            $lookup:{
-                from:"subscriptions",
-                localField: "_id",
-                foreignField:"channel",
-                as:"subscribers"
-            }
-        },
-        {
-            $lookup:{
-                from:"subscriptions",
-                localField: "_id",
-                foreignField:"subscriber",
-                as:"subscribedTo"
-            }
-        },
-            {
-                $addFields:{
-                    subscribersCount: {
-                            $size: "$subscribers"
-                        },
-                    subscribedToCount: {
-                            $size: "$subscribedTo" 
-                        },
-                    isSubscribed:{
-                        $cond:{
-                            if:{$in:[req.user?._id,"$subscribers.subscriber"]},//in array of subs find for object of sub
-                            then:true,
-                            else:false
-                        }
-                    }  
+// const getCreatorProfile = asyncHandler(async(req,res)=>{
+//     const {username}= req.params
+//         if(!username?.trim()){  
+//         throw new ApiError(400,"username is missing")
+//     }
+//     // match method in aggregationUser.find({username})
+//     const channel = await User.aggregate([{
+//         $match:{
+//             username: username?.toLowerCase()?.trim()
+//             }
+//         },
+//         {
+//         // interchange concept bcz --> channel  + subxiber = 1 Document in which channel may be high proportion of same no. and user may  be high prption of diffrnt no.
+//         // so count same thing distinct come with itself from docm
+//             $lookup:{
+//                 from:"subscriptions",
+//                 localField: "_id",
+//                 foreignField:"channel",
+//                 as:"subscribers"
+//             }
+//         },
+//         {
+//             $lookup:{
+//                 from:"subscriptions",
+//                 localField: "_id",
+//                 foreignField:"subscriber",
+//                 as:"subscribedTo"
+//             }
+//         },
+//             {
+//                 $addFields:{
+//                     subscribersCount: {
+//                             $size: "$subscribers"
+//                         },
+//                     subscribedToCount: {
+//                             $size: "$subscribedTo" 
+//                         },
+//                     isSubscribed:{
+//                         $cond:{
+//                             if:{$in:[req.user?._id,"$subscribers.subscriber"]},//in array of subs find for object of sub
+//                             then:true,
+//                             else:false
+//                         }
+//                     }  
                     
-                }
+//                 }
+//         },
+//         {
+//     $project:{
+//         fullName:1,
+//         username:1,
+//         subscribersCount:1,
+//         subscribedToCount:1,
+//         isSubscribed:1,
+//         avatar:1,
+//         coverImage:1,
+//         email:1
+//     }
+// }
+//     ])
+//     console.log("username param:", username);
+//     console.log("channel result:", channel);
+//     // if(!channel?.length){
+//     //     throw new ApiError(404,"channel does not exists")
+//     // }
+// return res.status(200).json(new ApiResponse(200,channel,"User channel created fetched successfully"))
+// })
+
+const getUserProfile = asyncHandler(async(req, res) => {
+    const {username} = req.params
+    if(!username?.trim()){  
+        throw new ApiError(400, "username is missing")
+    }
+
+    const profile = await User.aggregate([
+        {
+            $match: {
+                username: username?.toLowerCase()?.trim()
+            }
         },
         {
-    $project:{
-        fullName:1,
-        username:1,
-        subscribersCount:1,
-        subscribedToCount:1,
-        isSubscribed:1,
-        avatar:1,
-        coverImage:1,
-        email:1
-    }
-}
+            // People who follow THIS user
+            $lookup: {
+                from: "follows",
+                localField: "_id",
+                foreignField: "following",
+                as: "followers"
+            }
+        },
+        {
+            // People THIS user follows
+            $lookup: {
+                from: "follows",
+                localField: "_id",
+                foreignField: "follower",
+                as: "following"
+            }
+        },
+        {
+            $addFields: {
+                followersCount: {
+                    $size: "$followers"
+                },
+                followingCount: {
+                    $size: "$following"
+                },
+                isFollowing: {
+                    $cond: {
+                        if: { $in: [req.user?._id, "$followers.follower"] },
+                        then: true,
+                        else: false
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                fullName: 1,
+                username: 1,
+                followersCount: 1,
+                followingCount: 1,
+                isFollowing: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+        }
     ])
-    console.log("username param:", username);
-    console.log("channel result:", channel);
-    // if(!channel?.length){
-    //     throw new ApiError(404,"channel does not exists")
-    // }
-return res.status(200).json(new ApiResponse(200,channel,"User channel created fetched successfully"))
+
+    if(!profile?.length){
+        throw new ApiError(404, "user does not exist")
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, profile[0], "User profile fetched successfully")
+    )
 })
 const getWatchHistory = asyncHandler(async(req,res)=>{
     const user = await User.aggregate([
@@ -417,4 +487,4 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
         "WatchHistory fetched succesflly"
     ))
 })
-export {registerUser,loginUser,logout,refresh_AccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserChannelProfile,getWatchHistory,getCurrentUser};
+export {registerUser,loginUser,logout,refresh_AccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserProfile,getWatchHistory,getCurrentUser};
