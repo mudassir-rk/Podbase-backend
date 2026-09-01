@@ -1,24 +1,43 @@
+// import { Router } from 'express';
+// import { verifyJWT } from '../middleware/auth.js';
+// import { upload } from '../middleware/multer.js';
+// import {
+//     addDetails,
+
+// } from '../controller/shows.controller.js';
+
+// const router = Router();
+// router.route("/").post(
+//     verifyJWT,
+//     upload.single("coverImage"),
+//     addDetails
+// );
+// // router.route("/:showId")
+// //     .get(getShowById)
+// //     .patch(verifyJWT, upload.single("coverImage"), updateShow)
+    
+
+// export default showsRouter 
 import { Router } from 'express';
 import { verifyJWT } from '../middleware/auth.js';
 import { upload } from '../middleware/multer.js';
 import {
     addDetails,
-    getAllShows,
     getShowById,
     updateShow,
-    deleteShow
+    deleteShow,
 } from '../controller/shows.controller.js';
 
-const router = Router();
+const showsRouter = Router();
 
-router.route("/").get(getAllShows).post(
+showsRouter.route("/").post(
     verifyJWT,
     upload.single("coverImage"),
     addDetails
 );
-router.route("/:showId")
+showsRouter.route("/:showId")
     .get(getShowById)
     .patch(verifyJWT, upload.single("coverImage"), updateShow)
     .delete(verifyJWT, deleteShow);
 
-export { router as showsRouter };
+export default showsRouter;
