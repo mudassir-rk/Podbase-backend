@@ -14,7 +14,6 @@ const getCreatorStats = asyncHandler(async (req, res) => {
     //tweetId → identifies which tweet document to fetch (usually from req.params)
     //owner (on that tweet document) → identifies which user created it
 
-    
     const videoStats = await Video.aggregate([
         {
             $match: {
@@ -34,15 +33,15 @@ const getCreatorStats = asyncHandler(async (req, res) => {
         },
         {
             $lookup:{
-                from:"subscriptions",
+                from:"follows",
                 localfield: "_id",
-                foreignfield:"channel",
-                as:"subscribers"
+                foreignfield:"creator",
+                as:"followers"
             }
         },
         {
             $addFields:{
-                    subscribersCount:{
+                    followersCount:{
                         $size:"$followers"
                 },
             }
