@@ -7,19 +7,6 @@ import { User } from "../models/userModel.js"
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-
-// STEPS TO REGISTER USER---->>
-    // get user details from frontend
-    // validation - not empty
-    // check if user already exists: username, email
-    // check for images, check for avatar
-    // upload them to cloudinary, avatar
-    // create user object - create entry in db
-    // remove password and refresh token field from response
-    // check for user creation
-    // return res
-
-    //To check each step, we can use console log for it.
 const generateAccessTokenAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -27,17 +14,17 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
             throw new Error("User not found for token generation");
         }
 
-        // 1. Corrected casing to match return variables
+        
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 
-        // 2. Assign correctly named variable
+       
         user.refreshToken = refreshToken;
 
-        // 3. Clean .save() syntax
+        
         await user.save({ validateBeforeSave: false });
 
-        // 4. Return matching variable names
+
         return { accessToken, refreshToken };
     } catch (error) {
         console.log("Error inside generateAccessTokenAndRefreshToken:", error);
@@ -46,14 +33,13 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 }
 const registerUser = asyncHandler(async (req,res) =>{
     const {email,username,password,fullName} = req.body
-    //console.log("username",username);
     
     if(!email || !username || !password){
         return res.status(400).json({ // also be written as use of ApiError
             success:false,
             message:"Please provide all the required fields"
         })}
-    // If no User present similar OR no any First user It simply --> it gives null     
+        
     const userExists = await User.findOne({$or:[{email:email},{username:username}]})
     if(userExists){
         return res.status(409).json({
@@ -106,14 +92,6 @@ const registerUser = asyncHandler(async (req,res) =>{
     })}
    return res.status(201).json(new ApiResponse(201,createdUser,"User created successfully"))
 })
-    //STEPS TO LOGIN USER-->>
-    // get username or email and pasword from req body ->data
-    // validation - not empty
-    // check if user exists: username, email
-    // check for password match
-    // generate access token and refresh token
-    // save refresh token in db
-    // return res with access token and refresh tokenh
 const loginUser = asyncHandler(async (req, res) => {
     const { username,password } = req.body;
     if (!username || !password) {
@@ -136,16 +114,16 @@ const loginUser = asyncHandler(async (req, res) => {
             message: "Invalid credentials"
         });
     }
-    // Generate tokens
+    
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
-    // Fetch user without sensitive fields
+    
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
     const options = {
         httpOnly:true,
         secure: process.env.NODE_ENV === 'production',
         sameSite:'Lax'
     };
-    // Send response with cookies and JSON body together
+    
     return res
         .status(200)
         .cookie("accessToken", accessToken, options)
@@ -159,7 +137,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 const logout = asyncHandler(async(req,res) =>{
 
-  await User.findByIdAndUpdate( // bcz rfrshToken store on db 
+  await User.findByIdAndUpdate( 
     req.user._id,
     {
       $unset: { refreshToken: 1 }
@@ -198,7 +176,7 @@ const refresh_AccessToken = asyncHandler(async (req,res)=>{
     } catch(error) {
         throw new ApiError(401, error?.message || "Invalid refresh token")
     }
-    //to send refreshToken to cookies options are required before gen or after
+   
     const options ={
         httpOnly : true,
         secure : true
@@ -221,7 +199,7 @@ const changeCurrentPassword = asyncHandler(async(req,res) =>{
             throw new ApiError(401,"Invalid old password")
         }
         user.password = newPassword
-        await user.save({validateBeforeSave:"false"})//refrence in usermodel defined functn --> saves the updated password 
+        await user.save({validateBeforeSave:"false"})
     } catch (error) {
         
     } 
@@ -253,7 +231,7 @@ const user = User.findByIdAndUpdate(req.user?._id,
 return res.status(200).json(new ApiResponse(200,"Account details Updated Succesfully"))
 })
 const updateAvatarImage = asyncHandler(async(req,res)=>{
-    //request from auth middleware required=>>>>> Client request bhejta hai apne login cookie ke saath — "kaun sa user hai" nahi jaanta =>>>> (middleware) verifyJWT us cookie ke token ko decode karke DB me exact user dhoondh leta hai
+    
     const avatarLocalPath = req.file?.path
     if(!avatarLocalPath){
         throw new ApiError(400,"Avatar image not found")
@@ -274,7 +252,7 @@ const updateAvatarImage = asyncHandler(async(req,res)=>{
     return res.status(200).json(new ApiResponse(200,user,"avatar uploaded"))
 })
 const updateCoverImage = asyncHandler(async (req, res) => {
-    //Removed the try/catch — since this is wrapped in asyncHandler, thrown errors (including ApiError) should be caught by your global error-handling middleware instead of being silently swallowed.
+    
     const coverImageLocalPath = req.file?.path;
 
     if (!coverImageLocalPath) {
@@ -301,73 +279,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, user, "CoverImage uploaded successfully"));
 });
-// const getCreatorProfile = asyncHandler(async(req,res)=>{
-//     const {username}= req.params
-//         if(!username?.trim()){  
-//         throw new ApiError(400,"username is missing")
-//     }
-//     // match method in aggregationUser.find({username})
-//     const channel = await User.aggregate([{
-//         $match:{
-//             username: username?.toLowerCase()?.trim()
-//             }
-//         },
-//         {
-//         // interchange concept bcz --> channel  + subxiber = 1 Document in which channel may be high proportion of same no. and user may  be high prption of diffrnt no.
-//         // so count same thing distinct come with itself from docm
-//             $lookup:{
-//                 from:"subscriptions",
-//                 localField: "_id",
-//                 foreignField:"channel",
-//                 as:"subscribers"
-//             }
-//         },
-//         {
-//             $lookup:{
-//                 from:"subscriptions",
-//                 localField: "_id",
-//                 foreignField:"subscriber",
-//                 as:"subscribedTo"
-//             }
-//         },
-//             {
-//                 $addFields:{
-//                     subscribersCount: {
-//                             $size: "$subscribers"
-//                         },
-//                     subscribedToCount: {
-//                             $size: "$subscribedTo" 
-//                         },
-//                     isSubscribed:{
-//                         $cond:{
-//                             if:{$in:[req.user?._id,"$subscribers.subscriber"]},//in array of subs find for object of sub
-//                             then:true,
-//                             else:false
-//                         }
-//                     }  
-                    
-//                 }
-//         },
-//         {
-//     $project:{
-//         fullName:1,
-//         username:1,
-//         subscribersCount:1,
-//         subscribedToCount:1,
-//         isSubscribed:1,
-//         avatar:1,
-//         coverImage:1,
-//         email:1
-//     }
-// }
-//     ])
-//     console.log("username param:", username);
-//     console.log("channel result:", channel);
-//     // if(!channel?.length){
-//     //     throw new ApiError(404,"channel does not exists")
-//     // }
-// return res.status(200).json(new ApiResponse(200,channel,"User channel created fetched successfully"))
-// })
+
 
 const getUserProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
@@ -382,7 +294,7 @@ const getUserProfile = asyncHandler(async(req, res) => {
             }
         },
         {
-            // People who follow THIS user
+           
             $lookup: {
                 from: "follows",
                 localField: "_id",
@@ -391,7 +303,7 @@ const getUserProfile = asyncHandler(async(req, res) => {
             }
         },
         {
-            // People THIS user follows
+           
             $lookup: {
                 from: "follows",
                 localField: "_id",
@@ -447,13 +359,13 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
             }
         },
         {
-            $lookup:{ //from users to videos
+            $lookup:{ 
                 from:"videos",
                 localField:"watchHistory",
                 foreignField:"_id",
                 as:"watchHist",
                 pipeline:[
-                    {   //from video to users
+                    {  
                        $lookup:{
                         from:"users",
                         localField:"owner",
@@ -473,7 +385,7 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
                 ]
             }
         },
-        {//to easier to find owner from array
+        {
             $addFields:{
                 owner:{
                     $first:"$owner"
