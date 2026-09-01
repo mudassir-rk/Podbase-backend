@@ -45,12 +45,47 @@ const getUserCreatorFollowers = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid creator Id")
     }
 
-    const followers = await Follow.find({
-        following: creatorId,
-    })
-
+    // const followers = await Follow.find({
+    //     following: creatorId,
+    // })
+const followers = await Follow.aggregate([
+    {
+        $match: {
+            following: new mongoose.Types.ObjectId(creatorId)
+        }
+    },
+    {
+        $lookup: {
+            from: "users",
+            localField: "follower",
+            foreignField: "_id",
+            as: "followerDetails"
+        }
+    },
+    {
+        $addFields: {
+            totalCount: {
+                $size: "$followerDetails"
+            }
+        }
+    },
+    {
+        $unwind: "$followerDetails"//this will convert the array of followerDetails into a single object for each document in the result set. If there are multiple followerDetails, it will create multiple documents in the result set, one for each followerDetail.
+        //for ex:- before -->followerDetails: [ { fullName: "Alice" } ] After -->followerDetails: { fullName: "Alice" }
+    },
+    {
+        $project: {
+            _id: 0,
+            fullName: "$followerDetails.fullName",
+            username: "$followerDetails.username",
+            avatar:   "$followerDetails.avatar"
+        }
+    },
+       
+])
+const totalCount = followers.length
     return res.status(200).json(
-        new ApiResponse(200, followers, "List of followers fetched successfully")
+        new ApiResponse(200, { followers, totalCount }, "List of followers fetched successfully")
     )
 })
 

@@ -28,13 +28,13 @@ const createPlaylist = asyncHandler(async (req, res) => {
 })
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
-    const {userId} = req.params
+  
 
 
     const playlist = await Playlist.aggregate([
         {
             $match:{
-                owner : new mongoose.Types.ObjectId(userId)
+                owner : new mongoose.Types.ObjectId(req.user._id)
             }
         },
         {   $lookup:{

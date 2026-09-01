@@ -54,7 +54,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
 
 export {
     toggleCommentLike,
-    toggleTweetLike,
     toggleVideoLike,
     getLikedVideos
 }

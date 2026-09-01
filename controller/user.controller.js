@@ -2,28 +2,20 @@ import { asyncHandler} from "../utils/asyncHandler.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-import { verifyJWT } from "../middleware/auth.js";
 import { User } from "../models/userModel.js"
-import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+
 const generateAccessTokenAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
             throw new Error("User not found for token generation");
         }
-
-        
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
-
-       
-        user.refreshToken = refreshToken;
-
-        
+        user.refreshToken = refreshToken;        
         await user.save({ validateBeforeSave: false });
-
 
         return { accessToken, refreshToken };
     } catch (error) {
@@ -38,7 +30,8 @@ const registerUser = asyncHandler(async (req,res) =>{
         return res.status(400).json({ // also be written as use of ApiError
             success:false,
             message:"Please provide all the required fields"
-        })}
+        }
+    )}
         
     const userExists = await User.findOne({$or:[{email:email},{username:username}]})
     if(userExists){
@@ -47,7 +40,7 @@ const registerUser = asyncHandler(async (req,res) =>{
             message:"User with email or username already exists"
         })
     }
-    //const avatarLocalPath = req.files?.avatar[0]?.path; // ?.[0] optional chaining array index ke liye bhi use ho rahi hai, taaki agar avatar undefined ho toh crash na ho.
+    
 
     if (!req.files || !req.files.avatar || req.files.avatar.length === 0) {
     throw new ApiError(400, "Avatar file is required");
@@ -76,7 +69,7 @@ const registerUser = asyncHandler(async (req,res) =>{
             message: "Avatar file is required while uploading on cloudinary"
         })
     }
-    const newUser = await User.create({ // create user in db
+    const newUser = await User.create({ 
         fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || "", 
@@ -84,7 +77,7 @@ const registerUser = asyncHandler(async (req,res) =>{
         password,
         username: username.toLowerCase()
     })
-   const createdUser = await User.findById(newUser._id).select("-password -refreshToken") // '-' used to remove pwd and rfsh token
+   const createdUser = await User.findById(newUser._id).select("-password -refreshToken") // 
    if(!createdUser){
     return res.status(500).json({
         success:false,
@@ -350,53 +343,5 @@ const getUserProfile = asyncHandler(async(req, res) => {
         new ApiResponse(200, profile[0], "User profile fetched successfully")
     )
 })
-const getWatchHistory = asyncHandler(async(req,res)=>{
-    const user = await User.aggregate([
-        {
-            $match:{
-                //req.user._id-- not directly bcz , Aggregation are not used methods of mongoose to extact orig Id 
-                _id: new mongoose.Types.ObjectId(req.user._id)
-            }
-        },
-        {
-            $lookup:{ 
-                from:"videos",
-                localField:"watchHistory",
-                foreignField:"_id",
-                as:"watchHist",
-                pipeline:[
-                    {  
-                       $lookup:{
-                        from:"users",
-                        localField:"owner",
-                        foreignField:"_id",
-                        as:"owner",
-                        pipeline:[
-                            {
-                                $project:{
-                                    fullName:1,
-                                    username:1,
-                                    avatar:1
-                                }
-                            }
-                        ]
-                       } 
-                    }
-                ]
-            }
-        },
-        {
-            $addFields:{
-                owner:{
-                    $first:"$owner"
-                }
-            }
-        }
-    ])
-    //console.log(user)
-    //console.log(owner)
-    return res.status(200).json(new ApiResponse(200,user[0].watchHistory,
-        "WatchHistory fetched succesflly"
-    ))
-})
-export {registerUser,loginUser,logout,refresh_AccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserProfile,getWatchHistory,getCurrentUser};
+
+export {registerUser,loginUser,logout,refresh_AccessToken,changeCurrentPassword,updateAccountDetails,updateAvatarImage,updateCoverImage,getUserProfile,getCurrentUser};

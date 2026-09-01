@@ -12,7 +12,6 @@ import {
     updateAvatarImage,
     updateCoverImage,
     getUserProfile,
-    getWatchHistory,
     getCurrentUser
 } from "../controller/user.controller.js";
 
@@ -35,7 +34,6 @@ userRouter.route("/current-user").get(verifyJWT, getCurrentUser);
 userRouter.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateAvatarImage);
 userRouter.route("/cover-image").patch(verifyJWT, upload.single("coverImage"), updateCoverImage);
 userRouter.route("/updation").patch(verifyJWT, updateAccountDetails);
-userRouter.route("/history").get(verifyJWT, getWatchHistory);
 
 userRouter.route("/c/profile/:username").get(verifyJWT, getUserProfile);
 
