@@ -21,4 +21,4 @@ const showsSchema = new Schema(
     {
         timestamps:true
 })
-export const Shows = mongoose.model("Shows",showsSchema);
+export const Show = mongoose.model("Show",showsSchema);
