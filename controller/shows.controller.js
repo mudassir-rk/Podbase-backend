@@ -94,7 +94,7 @@ const updateShow = asyncHandler(async (req, res) => {
         showId,
         {$set: updateFields},
         {new: true}
-    )
+)
 
     return res.status(200).json(
         new ApiResponse(200, updatedShow, "Show updated successfully")
