@@ -143,4 +143,4 @@ const getCreatorVideos = asyncHandler(async (req, res) => {
         ))
 })
 
-export { getCreatorStats, getCreatorVideos }
+export { getCreatorStats , getCreatorVideos }
